@@ -1,0 +1,14 @@
+# Target labels
+ curl-populate
+# Source files and their labels
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/CMakeFiles/curl-populate
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/CMakeFiles/curl-populate.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/CMakeFiles/curl-populate-complete.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-build.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-configure.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-download.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-install.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-mkdir.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-patch.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-test.rule
+/home/subi/codes/FYP/final/github/moresimpler/build/_deps/curl-subbuild/curl-populate-prefix/src/curl-populate-stamp/curl-populate-update.rule
