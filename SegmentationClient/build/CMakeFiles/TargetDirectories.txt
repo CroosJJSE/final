@@ -1,0 +1,13 @@
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/SegmentationClient.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/edit_cache.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/rebuild_cache.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/list_install_components.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/install.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/install/local.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/CMakeFiles/install/strip.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/edit_cache.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/rebuild_cache.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/list_install_components.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/install.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/install/local.dir
+/home/subi/codes/FYP/final/SegmentationClient/build/_deps/json-build/CMakeFiles/install/strip.dir
