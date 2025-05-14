@@ -88,104 +88,65 @@ private:
     }
     
     void processingLoop() {
+        // Create output directory
+        system("rm -rf ./output_frames");
+        system("mkdir -p output_frames");
+        
+        int frame_count = 0;
         while (m_isRunning) {
             cv::Mat frame;
             
-            // Get a frame from the queue
+            // Get frame from queue (existing code remains same)
             {
                 std::unique_lock<std::mutex> lock(m_queueMutex);
                 m_queueCondition.wait(lock, [this] { 
                     return !m_frameQueue.empty() || !m_isRunning; 
                 });
                 
-                if (!m_isRunning) {
-                    break;
-                }
-                
-                if (m_frameQueue.empty()) {
-                    continue;
-                }
+                if (!m_isRunning) break;
+                if (m_frameQueue.empty()) continue;
                 
                 frame = m_frameQueue.front();
                 m_frameQueue.pop();
             }
             
-            // Convert to grayscale if necessary
+            // Convert to grayscale
             cv::Mat grayFrame;
-            if (frame.channels() > 1) {
-                cv::cvtColor(frame, grayFrame, cv::COLOR_BGR2GRAY);
-            } else {
-                grayFrame = frame;
-            }
+            cv::cvtColor(frame, grayFrame, cv::COLOR_BGR2GRAY);
             
-            // Start the segmentation timer
-            auto startTime = std::chrono::high_resolution_clock::now();
+            // Process segmentation
+            auto start = std::chrono::high_resolution_clock::now();
+            cv::Mat mask = m_segmentationClient.segmentImage(grayFrame);
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::high_resolution_clock::now() - start).count();
             
-            // Send the frame for segmentation asynchronously
-            std::future<cv::Mat> maskFuture = m_segmentationClient.segmentImageAsync(grayFrame);
-            
-            // Wait for the result
-            cv::Mat segmentationMask = maskFuture.get();
-            // Inside processingLoop() after getting the segmentation mask
-            if (!segmentationMask.empty()) {
-                std::cout << "Received segmentation mask: " 
-                        << segmentationMask.rows << "x" << segmentationMask.cols 
-                        << ", non-zero pixels: " << cv::countNonZero(segmentationMask) << std::endl;
-            } else {
-                std::cout << "Received empty segmentation mask" << std::endl;
-            }
-
-
-            // Calculate processing time
-            auto endTime = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-            
-            // Display the results if visualization is enabled
-            if (m_showVisualization && !segmentationMask.empty()) {
-                // Display the original grayscale image
-                cv::imshow("Original Image", grayFrame);
-                
-                // Display the segmentation mask
-                cv::imshow("Segmentation Mask", segmentationMask);
-                
-                // Apply the mask to the original image for visualization
-                cv::Mat visualizedSegmentation;
-                cv::cvtColor(grayFrame, visualizedSegmentation, cv::COLOR_GRAY2BGR);
-                
-                // Create a colored overlay for the mask
-                cv::Mat colorMask = cv::Mat::zeros(segmentationMask.size(), CV_8UC3);
-                colorMask.setTo(cv::Scalar(0, 255, 0), segmentationMask > 0);
-                
-                // Blend the original image with the colored mask
-                cv::addWeighted(visualizedSegmentation, 0.7, colorMask, 0.3, 0, visualizedSegmentation);
-                
-                // Display the blended result
-                cv::imshow("Segmentation Result", visualizedSegmentation);
-                
-                // Show processing time
-                std::cout << "Segmentation processing time: " << duration << " ms" << std::endl;
-                
-                            // Inside processingLoop() where visualization would happen
-                if (!segmentationMask.empty()) {
-                    // Save images to disk for verification
-                    static int frameCount = 0;
-                    std::string baseName = "frame_" + std::to_string(frameCount++);
-                    
-                    cv::imwrite(baseName + "_original.jpg", grayFrame);
-                    cv::imwrite(baseName + "_mask.jpg", segmentationMask);
-                    
-                    // Print confirmation
-                    std::cout << "Saved frame " << frameCount << " to disk" << std::endl;
+            if (!mask.empty()) {
+                // Resize and process mask
+                if (mask.size() != grayFrame.size()) {
+                    cv::resize(mask, mask, grayFrame.size(), 0, 0, cv::INTER_NEAREST);
                 }
-                // Process keyboard input
-                int key = cv::waitKey(1);
-                if (key == 27) { // ESC key
-                    stop();
-                    break;
+                
+                if (mask.channels() != 1) {
+                    cv::cvtColor(mask, mask, cv::COLOR_BGR2GRAY);
                 }
+                
+                cv::threshold(mask, mask, 1, 255, cv::THRESH_BINARY);
+    
+                // Create side-by-side result
+                cv::Mat result;
+                cv::cvtColor(grayFrame, result, cv::COLOR_GRAY2BGR);
+                cv::Mat colorMask(mask.size(), CV_8UC3, cv::Scalar(0, 255, 0));
+                colorMask.copyTo(result, mask);
+                
+                // Save all frames
+                std::string frame_num = std::to_string(frame_count++);
+                cv::imwrite("output_frames/original_" + frame_num + ".jpg", grayFrame);
+                cv::imwrite("output_frames/mask_" + frame_num + ".jpg", mask);
+                cv::imwrite("output_frames/result_" + frame_num + ".jpg", result);
+                
+                std::cout << "Saved frame " << frame_num 
+                          << " | Processing time: " << duration << "ms" << std::endl;
             }
-
-
         }
     }
     
